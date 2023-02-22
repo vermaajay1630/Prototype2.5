@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Prototype2.5</string>
+    <string name="registration">Registration</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
+    <string name="already_user_login">Already User? Login</string>
+    <string name="login">Login</string>
+    <string name="new_user_signup">New User? Sign up</string>
+    <string name="settings">Settings</string>
+    <string name="person">Person</string>
+</resources>
