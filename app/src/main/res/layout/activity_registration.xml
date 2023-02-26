@@ -35,6 +35,7 @@
         <EditText
             android:id="@+id/usernameReg"
             android:layout_width="300sp"
+            android:singleLine="true"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:hint="@string/username"
@@ -57,9 +58,11 @@
             android:layout_below="@id/usernameReg"
             android:layout_centerHorizontal="true"
             android:importantForAutofill="no"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:singleLine="true"/>
 
         <EditText
+            android:singleLine="true"
             android:id="@+id/passwordReg"
             android:layout_width="300sp"
             android:layout_height="wrap_content"
@@ -67,6 +70,7 @@
             android:hint="@string/password"
             android:textColorHint="@color/black"
             android:textSize="20sp"
+            android:inputType="textPassword"
             android:layout_below="@id/emailReg"
             android:layout_centerHorizontal="true"/>
 

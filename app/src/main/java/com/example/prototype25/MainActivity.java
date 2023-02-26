@@ -2,26 +2,39 @@ package com.example.prototype25;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,6 +49,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,14 +65,28 @@ public class MainActivity extends AppCompatActivity {
     private static final int CAM_REQ_CODE = 100;
     String currentPhotoPath;
     image_model image_model;
+    TextView addre;
 
+    Location location;
+    double describeContents;
+    List<Address> addresses;
+    Geocoder geocoder;
+
+    String addres;
+    final int REQUEST_CODE = 100;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    @RequiresApi(api = Build.VERSION_CODES.P)
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         username = findViewById(R.id.userName);
         img = findViewById(R.id.imageView);
         cam = findViewById(R.id.camBtn);
+        addre = findViewById(R.id.lng1);
+
         upload = findViewById(R.id.uploadBtn);
         Intent main = getIntent();
         String unname = main.getStringExtra("username");
@@ -66,6 +94,15 @@ public class MainActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("imageDetail");
         image_model = new image_model();
+        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+        }
+        location = locationManager
+                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        geocoder = new Geocoder(this);
+
+
         cam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,6 +118,50 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 101:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    try {
+                        addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 10);
+                        Address address = addresses.get(0);
+                 //       lat.setText("" + address.getAddressLine(0));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    //not granted
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        try {
+            addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 10);
+            Address addres = addresses.get(0);
+            addre.setText("" + addres.getAddressLine(0));
+            String adds = addres.getAddressLine(0);
+            address = adds;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 
@@ -153,7 +234,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -163,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
             Bitmap bm = BitmapFactory.decodeFile(currentPhotoPath);
             img.setImageBitmap(bm);
             String path = MediaStore.Images.Media.insertImage(getApplicationContext().getContentResolver(), bm, "val", null);
-            uri = Uri.parse(path);
+          uri =Uri.parse(path);
         }
     }
 }

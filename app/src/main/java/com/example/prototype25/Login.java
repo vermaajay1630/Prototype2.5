@@ -79,7 +79,7 @@ public class Login extends AppCompatActivity {
                                                 myedit.apply();
                                                 Intent feed = new Intent(getApplicationContext(), Feeds.class);
                                                 feed.putExtra("username", uname);
-                                               startActivity(feed);
+                                                startActivity(feed);
                                             }
                                             else {
                                                 Toast.makeText(Login.this, "Wrong Credentials", Toast.LENGTH_SHORT).show();

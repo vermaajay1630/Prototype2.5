@@ -22,6 +22,7 @@ public class myAdapter extends FirebaseRecyclerAdapter<image_model, myAdapter.my
     @Override
     protected void onBindViewHolder(@NonNull myViewHolder holder, int position, @NonNull image_model model) {
         holder.text.setText(model.getUserName());
+        holder.add.setText(model.getLocation());
         Glide.with(holder.imageView.getContext()).load(model.getImageUri()).into(holder.imageView);
     }
 
@@ -35,11 +36,12 @@ public class myAdapter extends FirebaseRecyclerAdapter<image_model, myAdapter.my
     class myViewHolder extends RecyclerView.ViewHolder{
 
         ImageView imageView;
-        TextView text;
+        TextView text,add;
         public myViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = (ImageView) itemView.findViewById(R.id.imageView);
             text = (TextView) itemView.findViewById(R.id.text);
+            add = (TextView) itemView.findViewById(R.id.add);
         }
     }
 }

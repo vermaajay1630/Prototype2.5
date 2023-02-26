@@ -65,8 +65,9 @@ public class Registration extends AppCompatActivity {
                                 createUser();
                                 reference.child("Users").child(uname).child("email").setValue(uemail);
                                 reference.child("Users").child(uname).child("password").setValue(upass);
-                                reference.child("Users").child(uname).child("username").setValue(uemail);
-                                Toast.makeText(Registration.this, "User Registered Successfully", Toast.LENGTH_SHORT).show();
+                                Intent log = new Intent(getApplicationContext(), Login.class);
+                                log.putExtra("username", uname);
+                                startActivity(log);
                             }
                         }
 
@@ -96,8 +97,6 @@ public class Registration extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
                         Toast.makeText(Registration.this, "Signed Up Successfully", Toast.LENGTH_SHORT).show();
-                        Intent log = new Intent(getApplicationContext(), Login.class);
-                        startActivity(log);
                     }
             }
         });

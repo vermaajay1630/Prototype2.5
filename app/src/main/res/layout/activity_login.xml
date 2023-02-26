@@ -37,6 +37,7 @@
             android:layout_width="300sp"
             android:layout_height="wrap_content"
             android:hint="@string/username"
+            android:singleLine="true"
             android:textColorHint="@color/black"
             android:textSize="20sp"
             android:inputType="text"
@@ -50,11 +51,13 @@
         <EditText
             android:id="@+id/passwordLog"
             android:layout_width="300sp"
+            android:singleLine="true"
             android:layout_height="wrap_content"
             android:hint="@string/password"
             android:textColorHint="@color/black"
             android:textColor="@color/black"
             android:textSize="20sp"
+            android:inputType="textPassword"
             android:layout_below="@id/usernameLog"
             android:layout_centerHorizontal="true"/>
 
